@@ -105,6 +105,18 @@ app.post('/messages', (req, res) => {
   return res.send(message);
 });
 
+app.delete('/messages/:messageId', (req, res) => {
+  const {
+    [req.params.messageId]: message,
+    ...otherMessages
+  } = messages;
+
+  messages = otherMessages;
+
+  return res.send(message);
+});
+
+
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
   next(createError(404));
