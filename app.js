@@ -116,6 +116,10 @@ app.delete('/messages/:messageId', (req, res) => {
   return res.send(message);
 });
 
+app.get('/session', (req, res) => {
+  return res.send(users[req.me.id]);
+});
+
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
