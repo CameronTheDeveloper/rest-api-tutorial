@@ -1,5 +1,6 @@
 const { v4: uuidv4 } = require('uuid');
 import models from './models';
+import routes from './routes';
 
 const createError = require("http-errors");
 const express = require("express");
@@ -50,7 +51,9 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/", indexRouter);
-app.use("/users", usersRouter);
+app.use('/session', routes.session);
+app.use('/users', routes.user);
+app.use('/messages', routes.message);
 
 app.use((req, res, next) => {
   req.context = {
@@ -59,62 +62,6 @@ app.use((req, res, next) => {
   };
   next();
 });
-
-app.get('/users', (req, res) => {
-  return res.send(Object.values(req.context.models.users));
-});
-
-app.get('/users/:userId', (req, res) => {
-  return res.send(req.context.models.users[req.params.userId]);
-});
-
-app.get('/messages', (req, res) => {
-  return res.send(Object.values(req.context.models.messages));
-});
-
-app.get('/messages/:messageId', (req, res) => {
-  return res.send(req.context.models.messages[req.params.messageId]);
-});
-
-app.post('/messages', (req, res) => {
-  const id = uuidv4();
-  const message = {
-    id,
-    text: req.body.text,
-    userId: req.context.me.id,
-  };
-
-  req.context.models.messages[id] = message;
-
-  return res.send(message);
-});
-
-app.delete('/messages/:messageId', (req, res) => {
-  const {
-    [req.params.messageId]: message,
-    ...otherMessages
-  } = req.context.models.messages;
-
-  req.context.models.messages = otherMessages;
-
-  return res.send(message);
-});
-
-app.delete('/messages/:messageId', (req, res) => {
-  const {
-    [req.params.messageId]: message,
-    ...otherMessages
-  } = messages;
-
-  messages = otherMessages;
-
-  return res.send(message);
-});
-
-app.get('/session', (req, res) => {
-  return res.send(req.context.models.users[req.context.me.id]);
-});
-
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
