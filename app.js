@@ -1,3 +1,5 @@
+import { v4 as uuidv4 } from 'uuid';
+
 const createError = require("http-errors");
 const express = require("express");
 const path = require("path");
@@ -82,6 +84,17 @@ app.get('/messages/:messageId', (req, res) => {
   return res.send(messages[req.params.messageId]);
 });
 
+app.post('/messages', (req, res) => {
+  const id = uuidv4();
+  const message = {
+    id,
+    text: req.body.text,
+  };
+
+  messages[id] = message;
+
+  return res.send(message);
+});
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
